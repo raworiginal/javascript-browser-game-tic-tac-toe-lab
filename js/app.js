@@ -10,14 +10,14 @@ const winningCombos = [
   [2, 4, 6],
 ];
 const turns = ["X", "O"];
-const startingBoard = new Array(9).fill("");
+
 /*---------------------------- Variables (state) ----------------------------*/
-let turnIdx = 0;
-let turn = turns[turnIdx];
+let turnIdx;
+let turn;
 let msg;
-let board = [...startingBoard];
-let winner = false;
-let tie = false;
+let board;
+let winner;
+let tie;
 /*------------------------ Cached Element References ------------------------*/
 const squareEls = document.querySelectorAll(".sqr");
 const msgEl = document.querySelector("#message");
@@ -25,6 +25,15 @@ const gameBoard = document.querySelector(".board");
 const resetBtn = document.querySelector("#reset");
 
 /*-------------------------------- Functions --------------------------------*/
+function init() {
+  board = new Array(9).fill("");
+  turnIdx = 0;
+  turn = turns[turnIdx];
+  winner = false;
+  tie = false;
+  msg;
+  render();
+}
 function handleClick(event) {
   const squareIndex = event.target.id;
   if (board[squareIndex]) return;
@@ -87,13 +96,8 @@ function switchTurn() {
 
 /*----------------------------- Event Listeners -----------------------------*/
 resetBtn.addEventListener("click", (event) => {
-  board = [...startingBoard];
-  turnIdx = 0;
-  turn = turns[turnIdx];
-  winner = false;
-  tie = false;
-  render();
+  init();
 });
 gameBoard.addEventListener("click", handleClick);
 /* Main loop */
-// init();
+init();
