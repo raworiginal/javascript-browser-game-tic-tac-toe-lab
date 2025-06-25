@@ -41,6 +41,7 @@ body {
 }
 
 button {
+  max-width: 325px;
   margin: 0.5em auto;
   /* padding: 0.75em; */
   width: 35%;
