@@ -3,7 +3,8 @@ body {
   /* Use a system font, if none are available use an available sans-sarif */
   font-family: Helvetica, sans-serif;
   text-align: center;
-  color: #F2E3D5; 
+  color: #f2e3d5;
+}
 .board {
   margin: auto auto;
   display: grid;
@@ -11,7 +12,7 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   aspect-ratio: 1/1;
   width: 325px;
-  border:5px solid #F2E3D5
+  border: 5px solid #f2e3d5;
   /* border: 2px dotted red; */
 }
 .sqr {
