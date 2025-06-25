@@ -9,7 +9,7 @@ const winningCombos = [
   [0, 4, 8],
   [2, 4, 6],
 ];
-const turns = ["X", "O"];
+const turns = ["☠️", "🥷"];
 
 /*---------------------------- Variables (state) ----------------------------*/
 let turnIdx;
@@ -89,7 +89,7 @@ function checkTie() {
 }
 function switchTurn() {
   if (winner || tie) return;
-  turnIdx = (turnIdx + 1) % 2;
+  turnIdx = (turnIdx + 1) % 2; //switches between zero and 1
   turn = turns[turnIdx];
 }
 
