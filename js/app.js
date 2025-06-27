@@ -10,11 +10,7 @@ const winningCombos = [
   [2, 4, 6],
 ];
 const turns = ["☠️", "🥷"];
-// const scores = {
-//   X: 1,
-//   O: -1,
-//   tie: 0,
-// };
+
 /*---------------------------- Variables (state) ----------------------------*/
 let turnIdx;
 let turn;
@@ -48,17 +44,14 @@ function handleClick(event) {
   if (mode) {
     playerTurn(event);
     winner = checkWinner();
-    console.log(winner);
-    checkTie();
+    tie = checkTie();
     switchTurn();
-    console.log(`the current turn is ${turn}`);
     render();
     if (mode === "vsComputer") {
       computerTurn();
       winner = checkWinner();
-      checkTie();
+      tie = checkTie();
       switchTurn();
-      console.log(`the current turn is ${turn}`);
       render();
     }
   }
@@ -88,27 +81,24 @@ function updateMessage() {
 
 function placePiece(index) {
   board[index] = turn;
-  // updateBoard();
 }
 
-function checkWinner() {
-  let winState = false;
-  winningCombos.forEach((combo) => {
-    if (!board[combo[0]]) return;
+function checkWinner(boardState = board) {
+  for (let combo of winningCombos) {
+    const [a, b, c] = combo;
     if (
-      board[combo[0]] === board[combo[1]] &&
-      board[combo[0]] === board[combo[2]]
+      boardState[a] &&
+      boardState[a] === boardState[b] &&
+      boardState[a] === boardState[c]
     ) {
-      winState = true;
+      return boardState[a]; // winner winner chicken dinner symbol
     }
-  });
-  return winState;
+  }
+  return null;
 }
 
-function checkTie() {
-  if (winner) return;
-  if (board.includes("")) return;
-  tie = true;
+function checkTie(boardState = board) {
+  return !checkWinner(boardState) && !boardState.includes("");
 }
 
 function switchTurn() {
@@ -116,31 +106,19 @@ function switchTurn() {
   turnIdx = (turnIdx + 1) % 2; // switches between 0 and 1
   turn = turns[turnIdx];
 }
+
 function swapBtns() {
   vsBtns.forEach((btn) => {
     btn.classList.toggle("hidden");
   });
   resetBtn.classList.toggle("hidden");
 }
+
 function computerTurn() {
-  // if (winner || tie) return;
-  // let availableSpaces = [];
-  // board.forEach((space, idx) => {
-  //   if (!space) {
-  //     availableSpaces.push(idx);
-  //   }
-  // });
-  // let computerChoiceIdx = math.randomInt(availableSpaces.length - 1);
-  // let computerChoice = availableSpaces[computerChoiceIdx];
-  const result = minimax(board, false);
+  if (winner || tie || turn !== "🥷") return;
+  const result = minimax([...board], true);
   const move = result.move;
-  if (move !== undefined) {
-    console.log("working", move);
-    placePiece(move);
-  } else {
-    console.log("Not working");
-    console.log(result);
-  }
+  if (move !== undefined) placePiece(move);
 }
 
 function playerTurn(event) {
@@ -159,46 +137,39 @@ function pause(ms) {
   }
 }
 
-function minimax(board, isMaximizing) {
-  const winner = checkWinner();
-  // console.log(winner);
-  if (winner && turnIdx === 0) return { score: 1 };
-  if (winner && turnIdx === 1) return { score: -1 };
+function minimax(boardState, isMax) {
+  const winner = checkWinner(boardState);
+  if (winner === "🥷") return { score: 1 };
+  if (winner === "☠️") return { score: -1 };
+  const tie = checkTie(boardState);
   if (tie) return { score: 0 };
-  // const testBoard = [...board];
   let bestMove;
-  if (isMaximizing) {
+  if (isMax) {
     let bestScore = -Infinity;
-    for (let [idx, space] of board.entries()) {
-      if (space === "") {
-        board[idx] = turns[0];
-        const result = minimax(board, false);
-        // console.log(result);
-        board[idx] = "";
-        // switchTurn();
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i] === "") {
+        boardState[i] = "🥷";
+        const result = minimax(boardState, false);
+        boardState[i] = "";
         if (result.score > bestScore) {
           bestScore = result.score;
-          bestMove = idx;
-          console.log(bestScore);
+          bestMove = i;
         }
       }
     }
     return { score: bestScore, move: bestMove };
   } else {
     let bestScore = Infinity;
-    for (let [idx, space] of board.entries()) {
-      if (space === "") {
-        board[idx] = turns[1];
-        const result = minimax(board, true);
-        // console.log(result);
-        board[idx] = "";
-        console.log(board);
+    for (let i = 0; i < boardState.length; i++) {
+      if (boardState[i] === "") {
+        boardState[i] = "☠️";
+        const result = minimax(boardState, true);
+        boardState[i] = "";
         if (result.score < bestScore) {
           bestScore = result.score;
-          bestMove = idx;
+          bestMove = i;
         }
       }
-      // switchTurn();
     }
     return { score: bestScore, move: bestMove };
   }
