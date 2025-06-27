@@ -10,7 +10,11 @@ const winningCombos = [
   [2, 4, 6],
 ];
 const turns = ["☠️", "🥷"];
-
+// const scores = {
+//   X: 1,
+//   O: -1,
+//   tie: 0,
+// };
 /*---------------------------- Variables (state) ----------------------------*/
 let turnIdx;
 let turn;
@@ -43,16 +47,18 @@ function init() {
 function handleClick(event) {
   if (mode) {
     playerTurn(event);
-    checkWinner();
+    winner = checkWinner();
+    console.log(winner);
     checkTie();
     switchTurn();
+    console.log(`the current turn is ${turn}`);
     render();
     if (mode === "vsComputer") {
       computerTurn();
-
-      checkWinner();
+      winner = checkWinner();
       checkTie();
       switchTurn();
+      console.log(`the current turn is ${turn}`);
       render();
     }
   }
@@ -86,15 +92,17 @@ function placePiece(index) {
 }
 
 function checkWinner() {
+  let winState = false;
   winningCombos.forEach((combo) => {
     if (!board[combo[0]]) return;
     if (
       board[combo[0]] === board[combo[1]] &&
       board[combo[0]] === board[combo[2]]
     ) {
-      winner = true;
+      winState = true;
     }
   });
+  return winState;
 }
 
 function checkTie() {
@@ -115,16 +123,24 @@ function swapBtns() {
   resetBtn.classList.toggle("hidden");
 }
 function computerTurn() {
-  if (winner || tie) return;
-  let availableSpaces = [];
-  board.forEach((space, idx) => {
-    if (!space) {
-      availableSpaces.push(idx);
-    }
-  });
-  let computerChoiceIdx = math.randomInt(availableSpaces.length - 1);
-  let computerChoice = availableSpaces[computerChoiceIdx];
-  placePiece(computerChoice);
+  // if (winner || tie) return;
+  // let availableSpaces = [];
+  // board.forEach((space, idx) => {
+  //   if (!space) {
+  //     availableSpaces.push(idx);
+  //   }
+  // });
+  // let computerChoiceIdx = math.randomInt(availableSpaces.length - 1);
+  // let computerChoice = availableSpaces[computerChoiceIdx];
+  const result = minimax(board, false);
+  const move = result.move;
+  if (move) {
+    console.log("working", move);
+    placePiece(move);
+  } else {
+    console.log("Not working");
+    console.log(result);
+  }
 }
 
 function playerTurn(event) {
@@ -133,12 +149,58 @@ function playerTurn(event) {
   if (winner || tie) return;
   placePiece(squareIndex);
 }
+
 function pause(ms) {
   let now = Date.now();
   console.log(now);
   const end = now + ms;
   while (now < end) {
     now = Date.now();
+  }
+}
+
+function minimax(board, isMaximizing) {
+  const winner = checkWinner();
+  // console.log(winner);
+  if (winner && turnIdx === 0) return { score: 1 };
+  if (winner && turnIdx === 1) return { score: -1 };
+  if (tie) return { score: 0 };
+  // const testBoard = [...board];
+  let bestMove;
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (let [idx, space] of board.entries()) {
+      if (space === "") {
+        board[idx] = turns[0];
+        const result = minimax(board, false);
+        // console.log(result);
+        board[idx] = "";
+        // switchTurn();
+        if (result.score > bestScore) {
+          bestScore = result.score;
+          bestMove = idx;
+          console.log(bestScore);
+        }
+      }
+    }
+    return { score: bestScore, move: bestMove };
+  } else {
+    let bestScore = Infinity;
+    for (let [idx, space] of board.entries()) {
+      if (space === "") {
+        board[idx] = turns[1];
+        const result = minimax(board, true);
+        // console.log(result);
+        board[idx] = "";
+        console.log(board);
+        if (result.score < bestScore) {
+          bestScore = result.score;
+          bestMove = idx;
+        }
+      }
+      // switchTurn();
+    }
+    return { score: bestScore, move: bestMove };
   }
 }
 /*----------------------------- Event Listeners -----------------------------*/
