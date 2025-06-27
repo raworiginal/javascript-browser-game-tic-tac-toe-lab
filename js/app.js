@@ -41,17 +41,12 @@ function init() {
 }
 
 function handleClick(event) {
-  if (mode === "vsPlayer") {
-    playerTurn(event);
-    checkWinner();
-    checkTie();
-    switchTurn();
-    render();
-  } else if (mode === "vsComputer") {
-    playerTurn(event);
-    checkWinner();
-    checkTie();
-    switchTurn();
+  playerTurn(event);
+  checkWinner();
+  checkTie();
+  switchTurn();
+  render();
+  if (mode === "vsComputer") {
     computerTurn();
     checkWinner();
     checkTie();
@@ -135,7 +130,14 @@ function playerTurn(event) {
   if (winner || tie) return;
   placePiece(squareIndex);
 }
-
+function pause(ms) {
+  let now = Date.now();
+  console.log(now);
+  const end = now + ms;
+  while (now < end) {
+    now = Date.now();
+  }
+}
 /*----------------------------- Event Listeners -----------------------------*/
 btnGrid.addEventListener("click", (event) => {
   if (event.target.id === "reset") {
