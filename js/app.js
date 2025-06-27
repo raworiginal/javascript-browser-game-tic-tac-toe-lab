@@ -39,6 +39,7 @@ function init() {
   mode = null;
   render();
 }
+
 function handleClick(event) {
   if (mode === "vsPlayer") {
     playerTurn(event);
@@ -134,9 +135,7 @@ function playerTurn(event) {
   if (winner || tie) return;
   placePiece(squareIndex);
 }
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+
 /*----------------------------- Event Listeners -----------------------------*/
 btnGrid.addEventListener("click", (event) => {
   if (event.target.id === "reset") {
