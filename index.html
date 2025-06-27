@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/style.css" />
     <script defer src="./js/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.5.2/math.min.js"></script>
     <title>Pirates vs Ninjas</title>
   </head>
   <body>
     <h1>Pirates vs Ninjas</h1>
-    <h2 id="message">X goes first</h2>
+    <h2 id="message">Please Choose a Mode</h2>
 
     <section class="board">
-      <div class="sqr top left" id="0" data-index="0">0</div>
+      <div class="sqr top left" id="0" data-index="0"></div>
       <div class="sqr top" id="1"></div>
       <div class="sqr top right" id="2"></div>
       <div class="sqr left mid" id="3"></div>
@@ -22,6 +23,10 @@
       <div class="sqr bottom" id="7"></div>
       <div class="sqr bottom right" id="8"></div>
     </section>
-    <button id="reset">reset</button>
+    <section class="buttons-grid">
+      <button class="versus" id="vs-player">Versus Player</button>
+      <button class="versus" id="vs-computer">Versus Computer</button>
+      <button class="hidden" id="reset">reset</button>
+    </section>
   </body>
 </html>

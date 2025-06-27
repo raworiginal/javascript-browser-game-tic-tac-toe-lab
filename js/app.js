@@ -18,11 +18,15 @@ let msg;
 let board;
 let winner;
 let tie;
+let mode = null;
+let computerPlay;
 /*------------------------ Cached Element References ------------------------*/
 const squareEls = document.querySelectorAll(".sqr");
 const msgEl = document.querySelector("#message");
 const gameBoard = document.querySelector(".board");
 const resetBtn = document.querySelector("#reset");
+const btnGrid = document.querySelector(".buttons-grid");
+const vsBtns = document.querySelectorAll(".versus");
 
 /*-------------------------------- Functions --------------------------------*/
 function init() {
@@ -31,18 +35,28 @@ function init() {
   turn = turns[turnIdx];
   winner = false;
   tie = false;
-  msg;
+  msg = "Please choose a mode";
+  mode = null;
   render();
 }
 function handleClick(event) {
-  const squareIndex = event.target.id;
-  if (board[squareIndex]) return;
-  if (winner || tie) return;
-  placePiece(squareIndex);
-  checkWinner();
-  checkTie();
-  switchTurn();
-  render();
+  if (mode === "vsPlayer") {
+    playerTurn(event);
+    checkWinner();
+    checkTie();
+    switchTurn();
+    render();
+  } else if (mode === "vsComputer") {
+    playerTurn(event);
+    checkWinner();
+    checkTie();
+    switchTurn();
+    computerTurn();
+    checkWinner();
+    checkTie();
+    switchTurn();
+    render();
+  }
 }
 
 function render() {
@@ -55,19 +69,21 @@ function updateBoard() {
   });
 }
 function updateMessage() {
-  if (!winner && !tie) {
-    message = `It is ${turn}'s turn`;
+  if (!mode) {
+    msg = "Please choose a mode";
+  } else if (!winner && !tie) {
+    msg = `It is ${turn}'s turn`;
   } else if (tie) {
-    message = "It is a tie.";
+    msg = "It is a tie.";
   } else if (winner) {
-    message = `The winner is ${turn}`;
+    msg = `The winner is ${turn}`;
   }
-  msgEl.textContent = message;
+  msgEl.textContent = msg;
 }
 
 function placePiece(index) {
   board[index] = turn;
-  updateBoard();
+  // updateBoard();
 }
 
 function checkWinner() {
@@ -81,21 +97,63 @@ function checkWinner() {
     }
   });
 }
+
 function checkTie() {
   if (winner) return;
   if (board.includes("")) return;
   tie = true;
-  console.log(tie);
-}
-function switchTurn() {
-  if (winner || tie) return;
-  turnIdx = (turnIdx + 1) % 2; //switches between zero and 1
-  turn = turns[turnIdx];
 }
 
+function switchTurn() {
+  if (winner || tie) return;
+  turnIdx = (turnIdx + 1) % 2; // switches between 0 and 1
+  turn = turns[turnIdx];
+}
+function swapBtns() {
+  vsBtns.forEach((btn) => {
+    btn.classList.toggle("hidden");
+  });
+  resetBtn.classList.toggle("hidden");
+}
+function computerTurn() {
+  if (winner || tie) return;
+  let availableSpaces = [];
+  board.forEach((space, idx) => {
+    if (!space) {
+      availableSpaces.push(idx);
+    }
+  });
+  let computerChoiceIdx = math.randomInt(availableSpaces.length - 1);
+  let computerChoice = availableSpaces[computerChoiceIdx];
+  placePiece(computerChoice);
+}
+
+function playerTurn(event) {
+  const squareIndex = event.target.id;
+  if (board[squareIndex]) return;
+  if (winner || tie) return;
+  placePiece(squareIndex);
+}
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 /*----------------------------- Event Listeners -----------------------------*/
-resetBtn.addEventListener("click", (event) => {
-  init();
+btnGrid.addEventListener("click", (event) => {
+  if (event.target.id === "reset") {
+    init();
+    swapBtns();
+  }
+  if (event.target.classList.contains("versus")) {
+    console.log(event.target);
+    if (event.target.id === "vs-player") {
+      mode = "vsPlayer";
+    } else {
+      mode = "vsComputer";
+    }
+    render();
+    console.log(mode);
+    swapBtns();
+  }
 });
 gameBoard.addEventListener("click", handleClick);
 
