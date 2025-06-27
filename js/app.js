@@ -41,17 +41,19 @@ function init() {
 }
 
 function handleClick(event) {
-  playerTurn(event);
-  checkWinner();
-  checkTie();
-  switchTurn();
-  render();
-  if (mode === "vsComputer") {
-    computerTurn();
+  if (mode) {
+    playerTurn(event);
     checkWinner();
     checkTie();
     switchTurn();
     render();
+    if (mode === "vsComputer") {
+      computerTurn();
+      checkWinner();
+      checkTie();
+      switchTurn();
+      render();
+    }
   }
 }
 
