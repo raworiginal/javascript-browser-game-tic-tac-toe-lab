@@ -49,6 +49,7 @@ function handleClick(event) {
     render();
     if (mode === "vsComputer") {
       computerTurn();
+
       checkWinner();
       checkTie();
       switchTurn();
