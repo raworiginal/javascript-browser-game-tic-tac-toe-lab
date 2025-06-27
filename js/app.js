@@ -134,7 +134,7 @@ function computerTurn() {
   // let computerChoice = availableSpaces[computerChoiceIdx];
   const result = minimax(board, false);
   const move = result.move;
-  if (move) {
+  if (move !== undefined) {
     console.log("working", move);
     placePiece(move);
   } else {
