@@ -40,7 +40,7 @@ function init() {
   render();
 }
 
-function handleClick(event) {
+async function handleClick(event) {
   if (mode) {
     playerTurn(event);
     winner = checkWinner();
@@ -48,6 +48,7 @@ function handleClick(event) {
     switchTurn();
     render();
     if (mode === "vsComputer") {
+      await pause(1);
       computerTurn();
       winner = checkWinner();
       tie = checkTie();
@@ -128,15 +129,16 @@ function playerTurn(event) {
   placePiece(squareIndex);
 }
 
-function pause(ms) {
-  let now = Date.now();
-  console.log(now);
-  const end = now + ms;
-  while (now < end) {
-    now = Date.now();
-  }
+async function pause(s) {
+  await resolveAfterNSeconds(s);
+  return;
 }
-
+function resolveAfterNSeconds(n) {
+  n *= 1000;
+  return new Promise((resolve) => {
+    setTimeout(() => resolve("resolved"), n);
+  });
+}
 function minimax(boardState, isMax) {
   const winner = checkWinner(boardState);
   if (winner === "🥷") return { score: 1 };
