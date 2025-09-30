@@ -17,6 +17,4 @@ While the assignment stopped at two human players, I implemented an AI opponent 
 * Application of computer science fundamentals (game trees and decision-making)
 * A more challenging and polished game experience
 
----
 
-Do you want me to also draft a **one-line installation/run section** (so recruiters can try it quickly), or leave it as a portfolio showcase?
